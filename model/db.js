@@ -27,8 +27,6 @@ exports.mg_insertOne = (collectionName, doc, insertOneOpCallback) => {
     });
 }
 
-
-
 exports.mg_find = (collectionName, query, options, findCallBack) => {
     let result = [];
     _connectDB((err, client, db) => {
