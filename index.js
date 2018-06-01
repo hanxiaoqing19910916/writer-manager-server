@@ -4,6 +4,17 @@ var express = require('express');
 var app = express();
 app.listen(4000);
 
+
+// 全局拦截配置CROS
+app.all('*',function(req,res,next){
+	res.header('Access-Control-Allow-origin','*')
+	res.header('Access-Control-Allow-Headers','accept, origin, X-Requested-With, content-type, token, userId')
+	res.header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS')
+	res.header('Content-Type','application/json;charset=utf-8')
+	res.header('Access-Control-Allow-Credentials','true')
+	next()
+})
+
 // app.locals.title = 'My App';
 // app.locals.email = 'me@myapp.com';
 var router = express.Router();
