@@ -1,5 +1,30 @@
 const mysql = require("mysql");
 
+var express = require('express');
+var app = express();
+app.listen(4000);
+
+// app.locals.title = 'My App';
+// app.locals.email = 'me@myapp.com';
+var router = express.Router();
+
+router.get('/users', function(req, res){
+    console.log(req.query);
+    res.status(200).send({code:200,data:[],msg:'success'});
+});
+  
+
+router.get('/', function(req, res, next){
+  console.log(req.query);
+  res.status(200).send({code:200,data:[],msg:'success'});
+});
+
+app.use(router);
+
+
+
+
+/** 
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -75,4 +100,4 @@ var loginResultInfo = {
 }
 
 // 通过error_num判断失败类型，若是login_token过期，就一定要清localstorage的acclogin_token为""，
-
+*/
