@@ -1,8 +1,14 @@
 const mysql = require("mysql");
 
 var express = require('express');
+const bodyParser = require('body-parser');
 var app = express();
 app.listen(4000);
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 
 // 全局拦截配置CROS
@@ -19,13 +25,13 @@ app.all('*',function(req,res,next){
 // app.locals.email = 'me@myapp.com';
 var router = express.Router();
 
-router.get('/users', function(req, res){
-    console.log(req.query);
+router.post('/login', function(req, res){
+    console.log(req.body);
     res.status(200).send({code:200,data:[],msg:'success'});
 });
   
 
-router.get('/', function(req, res, next){
+router.post('/register', function(req, res){
   console.log(req.query);
   res.status(200).send({code:200,data:[],msg:'success'});
 });
