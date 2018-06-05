@@ -1,15 +1,24 @@
 const mysql = require("mysql");
+const signString = require("./model/encodeParams");
+var MD5 = require("./model/encodeString").MD5;
+
+
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'qazwsxedc',
+    database: 'gy1'
+});
+
 
 var express = require('express');
-const bodyParser = require('body-parser');
 var app = express();
 app.listen(4000);
 
 
+const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-
 
 // 全局拦截配置CROS
 app.all('*',function(req,res,next){
@@ -21,13 +30,47 @@ app.all('*',function(req,res,next){
 	next()
 })
 
-// app.locals.title = 'My App';
-// app.locals.email = 'me@myapp.com';
 var router = express.Router();
-
 router.post('/login', function(req, res){
+    // 对比请求时间
+    const reqtime = req.body.time_stamp;
+    if (new Date().getTime() - reqtime >= 20 * 1000) {
+        res.status(408).send({code:1000,data:[],msg:'out of time'});
+        return;
+    }
     console.log(req.body);
-    res.status(200).send({code:200,data:[],msg:'success'});
+
+    // 校验请求串 later
+    // const sign = signString(req.body,'tfdajfsdad');
+    
+
+    // 数据库查找用户是否存在
+    const lookupUser = `SELECT username,password FROM users WHERE username='${req.body.username}'`;
+    db.query(lookupUser,function (err,result) {
+        if(err){
+            console.log('ERROR- ',err.message,err.errno);
+            if (err.errno === 1054) {
+                res.status(200).send({code:1001,msg:'用户名不存在'});
+            } else {
+                res.status(200).send({code:1003,msg:'数据库异常'});
+            }
+            return;
+        }
+        console.log('CREATE SUCCESS:',result);
+
+        // 密码校验
+        const resPassword = MD5(req.body.password);
+
+
+        console.log(result[0].password);
+        if (resPassword != result[0].password) {
+            res.status(200).send({code:1002,msg:'密码错误'});
+            return;
+        } 
+
+        res.status(200).send({code:0,msg:'登陆成功'});
+    });
+  
 });
   
 
@@ -37,7 +80,6 @@ router.post('/register', function(req, res){
 });
 
 app.use(router);
-
 
 
 
