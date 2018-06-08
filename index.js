@@ -61,7 +61,7 @@ router.post('/login', function(req, res){
         // 密码校验
         const resPassword = MD5(req.body.password);
 
-
+        
         console.log(result[0].password);
         if (resPassword != result[0].password) {
             res.status(200).send({code:1002,msg:'密码错误'});
